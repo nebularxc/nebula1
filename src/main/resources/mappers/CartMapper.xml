@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+	"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="cn.tedu.store.mapper.CartMapper">
+
+	<!-- 新增购物车数据 -->
+	<!-- Integer addnew(Cart cart) -->
+	<insert id="addnew"
+		useGeneratedKeys="true"
+		keyProperty="id">
+		INSERT INTO t_cart (
+			uid, gid,
+			price, count,
+			created_user, created_time,
+			modified_user, modified_time
+		) VALUES (
+			#{uid}, #{gid},
+			#{price}, #{count},
+			#{createdUser}, #{createdTime},
+			#{modifiedUser}, #{modifiedTime}
+		)
+	</insert>
+
+	<!-- 更新购物车中商品的数量 -->
+	<!-- Integer updateCount(
+		@Param("id") Integer id, 
+		@Param("count") Integer count) -->
+	<update id="updateCount">
+		UPDATE 
+			t_cart
+		SET 
+			count=#{count}
+		WHERE 
+			id=#{id}
+	</update>
+
+	<!-- 根据用户id和商品id查询购物车数据 -->
+	<!-- Cart findByUidAndGid(
+		@Param("uid") Integer uid, 
+		@Param("goodsId") Long goodsId) -->
+	<select id="findByUidAndGid"
+		resultType="cn.tedu.store.entity.Cart">
+		SELECT 
+			id, count
+		FROM 
+			t_cart
+		WHERE 
+			uid=#{uid} AND gid=#{goodsId}
+	</select>
+
+	<!-- 根据id获取购物车数据 -->
+	<!-- Cart findById(Integer id) -->
+	<select id="findById"
+		resultType="cn.tedu.store.entity.Cart">
+		SELECT 
+			uid, count
+		FROM 
+			t_cart
+		WHERE 
+			id=#{id}
+	</select>
+	
+	<!-- 根据用户id查询该用户的购物车数据列表 -->
+	<!-- List<CartVO> findByUid(Integer uid) -->
+	<select id="findByUid"
+		resultType="cn.tedu.store.vo.CartVO">
+		SELECT 
+			t_cart.id, 
+			uid, gid, 
+			t_cart.price AS oldPrice, count, 
+			t_goods.price AS newPrice,
+			title, image
+		FROM 
+			t_cart
+		INNER JOIN 
+			t_goods
+		ON 
+			t_cart.gid=t_goods.id
+		WHERE 
+			uid=#{uid}
+		ORDER BY 
+			id DESC
+	</select>
+	
+</mapper>
+
+
+
+
+

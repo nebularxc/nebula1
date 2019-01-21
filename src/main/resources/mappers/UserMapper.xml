@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8" ?>  
+<!DOCTYPE mapper PUBLIC "-//ibatis.apache.org//DTD Mapper 3.0//EN"      
+	"http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd">
+
+<mapper namespace="cn.tedu.store.mapper.UserMapper">
+
+	<!-- 插入用户数据 -->
+	<!-- Integer addnew(User user) -->
+	<insert id="addnew"
+		parameterType="cn.tedu.store.entity.User"
+		useGeneratedKeys="true"
+		keyProperty="id">
+		INSERT INTO t_user (
+			username, password,
+			salt, gender,
+			phone, email,
+			avatar, is_delete,
+			created_user, created_time,
+			modified_user, modified_time
+		) VALUES (
+			#{username}, #{password},
+			#{salt}, #{gender},
+			#{phone}, #{email},
+			#{avatar}, #{isDelete},
+			#{createdUser}, #{createdTime},
+			#{modifiedUser}, #{modifiedTime}
+		)
+	</insert>
+	
+	<!-- 更新密码 -->
+	<!-- Integer updatePassword(
+		@Param("uid") Integer uid,
+		@Param("password") String password,
+		@Param("modifiedUser") String modifiedUser,
+		@Param("modifiedTime") Date modifiedTime
+	); -->
+	<update id="updatePassword">
+		UPDATE 
+			t_user
+		SET
+			password=#{password},
+			modified_user=#{modifiedUser},
+			modified_time=#{modifiedTime}
+		WHERE
+			id=#{uid}
+	</update>
+	
+	<!-- 更新用户头像 -->
+	<!-- Integer updateAvatar(
+		@Param("uid") Integer uid, 
+		@Param("avatar") String avatar, 
+		@Param("modifiedUser") String modifiedUser, 
+		@Param("modifiedTime") Date modifiedTime
+	); -->
+	<update id="updateAvatar">
+		UPDATE 
+		    t_user 
+		SET 
+		    avatar=#{avatar},
+		    modified_user=#{modifiedUser},
+		    modified_time=#{modifiedTime}
+		WHERE 
+		    id=#{uid}
+	</update>
+	
+	<!-- 修改用户资料（不含用户名、密码与头像） -->
+	<!-- Integer updateInfo(User user); -->
+	<update id="updateInfo">
+		UPDATE 
+			t_user
+		SET
+			<if test="gender != null">
+			gender=#{gender},
+			</if>
+
+			<if test="phone != null">
+			phone=#{phone},
+			</if>
+
+			<if test="email != null">
+			email=#{email},
+			</if>
+
+			modified_user=#{modifiedUser},
+			modified_time=#{modifiedTime}
+		WHERE 
+			id=#{id}
+	</update>
+	
+	<!-- 根据用户名查询用户数据 -->
+	<!-- 应用于：注册，登录 -->
+	<!-- User findByUsername(String username) -->
+	<select id="findByUsername"
+		resultType="cn.tedu.store.entity.User">
+		SELECT 
+			id, username, password,
+			salt, avatar, 
+			is_delete AS isDelete
+		FROM 
+			t_user
+		WHERE 
+			username=#{username}
+	</select>
+	
+	<!-- 根据用户id查询用户数据 -->
+	<!-- User findById(Integer id) -->
+	<select id="findById"
+		resultType="cn.tedu.store.entity.User">
+		SELECT 
+			username,
+			gender, phone, email,
+			password, salt,
+			is_delete AS isDelete
+		FROM 
+			t_user
+		WHERE 
+			id=#{id}
+	</select>
+
+</mapper>
+
+
+
+
+
